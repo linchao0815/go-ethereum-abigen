@@ -20,7 +20,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 
@@ -106,6 +108,14 @@ func abigen(c *cli.Context) error {
 	switch c.GlobalString(langFlag.Name) {
 	case "go":
 		lang = bind.LangGo
+		if wd, err := os.Getwd(); err == nil {
+			tmpl := filepath.Join(wd, "abigen.go.tmpl")
+			b, err := ioutil.ReadFile(tmpl)
+			if err == nil {
+				bind.ChangeGoTemplate(string(b))
+			}
+			fmt.Printf("ReadFile %s err:%v\n", tmpl, err)
+		}
 	case "java":
 		lang = bind.LangJava
 	case "objc":
